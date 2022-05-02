@@ -1,27 +1,16 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using static NumbersTheCalculator.Enums;
 
 namespace NumbersTheCalculator
 {
     public class Keyswitch : MonoBehaviour
     {
-        public enum KeyValue
-        {
-            Zero, DecimalPoint, One, Two, Three, Equals, Four, Five, Six,
-            Seven, Eight, Nine, Add, Clear, Divide, Multiply, Subtract
-        };
-        public enum KeyStyle
-        {
-            Long, Tall, Default
-        };
-        private bool _isPressed;
-        public float holdTime;
         public UnityEvent onPress;
-        public UnityEvent onHold;
         public UnityEvent onRelease;
 
+        private bool _isPressed;
+        public float holdTime;       
         private KeyValue _keyValue;
         private Calculator _calculator;
         private MeshFilter _capMeshFilter;
@@ -33,15 +22,14 @@ namespace NumbersTheCalculator
             _calculator = FindObjectOfType<Calculator>();
             _capMeshFilter = GetComponent<MeshFilter>();
             _legendMeshFilter = transform.Find("Legend").GetComponent<MeshFilter>();
-            //_equalsMesh = transform.Find("Equals Key").GetComponent<MeshFilter>();
             _boxCollider = GetComponent<BoxCollider>();
         }
 
-        public void SetKeyStyle(KeyValue keyValue)
+        public void SetKeyValue(KeyValue keyValue)
         {
             _keyValue = keyValue;
             KeyStyle keyStyle = KeyStyle.Default;
-            //MeshFilter equalsDupe = new MeshFilter();
+
             switch (keyValue)
             {
                 case KeyValue.Zero:
@@ -66,12 +54,10 @@ namespace NumbersTheCalculator
                     _legendMeshFilter.mesh = _calculator.legendMeshes[5];
                     _legendMeshFilter.transform.localScale += new Vector3(1f, 0, 0);
                     _legendMeshFilter.transform.Rotate(0, 0, -65f);
-                    // scale and rotate
                     break;
                 case KeyValue.Multiply:
                     _legendMeshFilter.mesh = _calculator.legendMeshes[12];
                     _legendMeshFilter.transform.Rotate(0, 0, 45f);
-                    // rotate 45 degrees
                     break;
                 case KeyValue.Subtract:
                     _legendMeshFilter.mesh = _calculator.legendMeshes[5];
@@ -99,14 +85,10 @@ namespace NumbersTheCalculator
         }
         public void KeyDown()
         {
-            //float animationSpeed = .1f;
-            Debug.Log("HIT " + _keyValue);
+            _calculator.EnterValue(_keyValue);
             Vector3 bottomOut = new Vector3(0f, -.66f, 0f);
             transform.position += bottomOut;
             _isPressed = true;
-            
-            // Animate Key going down
-            // Send Value to Input
         }
         public void KeyUp()
         {            
@@ -114,12 +96,7 @@ namespace NumbersTheCalculator
             Vector3 bottomOut = new Vector3(0f, -.66f, 0f);
             transform.position -= bottomOut;
             _isPressed = false;
-
-            // Animate Key going up
-            // Send Value to Input
         }
-        public KeyValue keyValue { get => _keyValue; set => _keyValue = value; }
         public bool isPressed { get => _isPressed;}
-
     }
 }

@@ -20,7 +20,6 @@ namespace NumbersTheCalculator
         {
             _userInput = new UserInput();
             _camera = Camera.main;
-            //_pressedKeyswitch = new Keyswitch();
         }
 
         private void OnEnable()
@@ -46,28 +45,17 @@ namespace NumbersTheCalculator
                 if (hit.collider != null)
                 {
                     _pressedKeyswitch = hit.collider.GetComponent<Keyswitch>();
-                    PressKey(_pressedKeyswitch);
+                    _pressedKeyswitch.onPress.Invoke();
                 }
             }
         }
         private void EndTouch(InputAction.CallbackContext context)
         {
-             if (_pressedKeyswitch != null)
+             if (_pressedKeyswitch != null && _pressedKeyswitch.isPressed)
              {
-                ReleaseKey();
-             }
-        }
-        private void PressKey(Keyswitch clickedKeyswitch)
-        {
-            clickedKeyswitch.onPress.Invoke();
-        }
-        private void ReleaseKey()
-        {
-            if (_pressedKeyswitch.isPressed)
-            {
                 _pressedKeyswitch.onRelease.Invoke();
                 _pressedKeyswitch = null;
-            }    
+            }
         }
     }
 }

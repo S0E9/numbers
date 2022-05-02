@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
+using static NumbersTheCalculator.Enums;
 
-namespace NumbersTheCalculator.Assets._Project.Scripts
+namespace NumbersTheCalculator
 {
     internal class ResultDisplay: MonoBehaviour
     {
@@ -11,18 +12,7 @@ namespace NumbersTheCalculator.Assets._Project.Scripts
         private string _meshName;
         private MeshRenderer meshRenderer;
         private MeshFilter meshFilter;
-        [SerializeField]
-        private enum digitPlace
-        {
-            Ones,      Tens,        Hundreds,
-            Thousands, TenThousands,HundredThousands,
-            Millions,  TenMillions, HundredMillions,
-            Billions,  Comma,       Decimal
-        };
-        private enum numberValue
-        {
-            zero, one, two, three, four, five, six, seven, eight, nine, comma, decimalplace
-        };
+        
         private string _meshString()
         {
             string myValue = "";
@@ -70,7 +60,7 @@ namespace NumbersTheCalculator.Assets._Project.Scripts
             return myValue;
         }
         [SerializeField]
-        private digitPlace _myPlace;
+        private DigitPlace _digitPlace;
         // change the mesh renderer to match whatever value is in each place
         private void Start()
         {
@@ -83,8 +73,8 @@ namespace NumbersTheCalculator.Assets._Project.Scripts
         }
         private void ShowPlace()
         {
-            digitPlace digitPlace = _myPlace;
-            Debug.Log(digitPlace.ToString());
+           // digitPlace digitPlace = _myPlace;
+            //Debug.Log(digitPlace.ToString());
             if(_isActive)
             {
                 //transform.position.y = transform.position.y + _isActiveHeight;

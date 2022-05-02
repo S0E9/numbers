@@ -223,7 +223,7 @@ GameObject:
   - component: {fileID: 81018868}
   - component: {fileID: 81018867}
   m_Layer: 5
-  m_Name: InputField (TMP)
+  m_Name: InputField
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -307,7 +307,7 @@ MonoBehaviour:
   m_HideSoftKeyboard: 0
   m_CharacterValidation: 0
   m_RegexValue: 
-  m_GlobalPointSize: 14
+  m_GlobalPointSize: 10
   m_CharacterLimit: 0
   m_OnEndEdit:
     m_PersistentCalls:
@@ -962,6 +962,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 293eef6cb30c0a04694c38c4d500863f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _inputField: {fileID: 81018867}
   _legendMeshes:
   - {fileID: 4300000, guid: ff3c286b74dcbf24f94f87f86ec52878, type: 3}
   - {fileID: 4300000, guid: 0470d7f89bb2a584084b29707eb378b8, type: 3}
@@ -1009,9 +1010,7 @@ MonoBehaviour:
   - {fileID: -5495902117074765545, guid: 3f982b4f71756bf42b837f26831b24e5, type: 3}
   - {fileID: -5495902117074765545, guid: e1f4154803e29d8488be1735e5bf5e1d, type: 3}
   _keyswitch: {fileID: 2357968525449308, guid: 0ef18c8a003f49149af51aa3446987d9, type: 3}
-  _equalsMesh: {fileID: 2694042403303446823, guid: 4d7f6196540f5ad4b8d89e6d5ea41e3e,
-    type: 3}
-  _mainColor: {r: 0.22467962, g: 0.2594779, b: 0.31132078, a: 0}
+  _mainColor: {r: 0.502225, g: 0.5514863, b: 0.6226415, a: 0}
   _altColor: {r: 0.735849, g: 0.36608246, b: 0.10065861, a: 0}
 --- !u!114 &729479438
 MonoBehaviour:
@@ -1660,8 +1659,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 14
-  m_fontSizeBase: 14
+  m_fontSize: 10
+  m_fontSizeBase: 10
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 0
@@ -2241,8 +2240,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 14
-  m_fontSizeBase: 14
+  m_fontSize: 10
+  m_fontSizeBase: 10
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 0
