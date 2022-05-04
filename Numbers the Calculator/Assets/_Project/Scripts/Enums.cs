@@ -10,7 +10,7 @@ namespace NumbersTheCalculator
     {
         public enum CalculatorState
         {
-            WaitingFirst, ValidFirst, WaitingSecond, ValidSecond
+            WaitingFirst, ValidFirst, WaitingSecond
         }
         public enum DigitPlace // this might just be for the display class, maybe remove comma?
         {

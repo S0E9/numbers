@@ -24,16 +24,17 @@ namespace NumbersTheCalculator
         private Color _keyswitchColor;
 
         private CalculatorState _calcState;
-        private double _input1;
-        private double _input2;
+        private double? _input1;
+        private double? _input2;
         private string _operator;
-        private double _result;
+        private double? _result;
         private ResultDisplay _resultDisplay;
 
         private void Awake()
         {
             _keyswitchArray = new Keyswitch[17];
             _inputField.text = "";
+            _result = null;
             _calcState = CalculatorState.WaitingFirst;
             SetKeyswitches();
         }
@@ -86,6 +87,8 @@ namespace NumbersTheCalculator
             bool hasDecimal = _inputField.text.Contains(".");
             bool isNegative = _inputField.text.Contains("-");
             bool inputIsValid = (_inputField.text != "." && _inputField.text != "" && _inputField.text != "-");
+            bool hasResult = !_result.Equals(null);
+            bool inputLimit = _inputField.text.Length > 9 ? true : false;
 
             switch (keyvalue)
             {
@@ -101,11 +104,16 @@ namespace NumbersTheCalculator
                     }                    
                     break;
                 case KeyValue.Subtract:
-                    if (!inputIsValid)
+                    if (!inputIsValid || _calcState == CalculatorState.ValidFirst)
                     {
                         if (!isNegative)
                         {
+                            _inputField.text = "";
                             _inputField.text += "-";
+                            if (_calcState == CalculatorState.ValidFirst)
+                            {
+                                _calcState = CalculatorState.WaitingSecond;
+                            }
                         }    
                         else
                         {
@@ -160,20 +168,14 @@ namespace NumbersTheCalculator
                         _inputField.text += ".";
                     }
                     break;
-                case KeyValue.Zero:
-                    if (_inputField.text == "0")
-                    {
-                        return;
-                    }
-                    else
-                    {
-                        _inputField.text += "0";
-                    }
-                    break;
                 default: // digit = -1 on first row, -2 on other two
-                    if ((int)keyvalue < 5 && (int)keyvalue > 1)
+                    if ((int)keyvalue < 5 && (int)keyvalue != 1)
                     {
                         digit = (int)keyvalue - 1;
+                        if(keyvalue == 0)
+                        {
+                            digit = 0;
+                        }
                     }
                     else
                     {
@@ -182,18 +184,27 @@ namespace NumbersTheCalculator
                     switch (_calcState)
                     {
                         case CalculatorState.WaitingFirst:
-                            _inputField.text += $"{digit}";
+                            if (_inputField.text != "0" && !inputLimit)
+                            {
+                                _inputField.text += $"{digit}";
+                            }
+                            if (hasResult)
+                            {
+                                _result = null;
+                                _inputField.text = "";
+                                _inputField.text += $"{digit}";
+                            }
                             break;
                         case CalculatorState.ValidFirst:
                             _inputField.text = "";
-                            _inputField.text = digit.ToString();
+                            _inputField.text += $"{digit}";
                             _calcState = CalculatorState.WaitingSecond;
                             break;
                         case CalculatorState.WaitingSecond:
-                            _inputField.text += $"{digit}";
-                            break;
-                        case CalculatorState.ValidSecond:
-                            Clear();
+                            if (_inputField.text != "0" && !inputLimit)
+                            {
+                                _inputField.text += $"{digit}";
+                            }                            
                             break;
                         default:
                             _inputField.text = "E";
@@ -202,28 +213,10 @@ namespace NumbersTheCalculator
                     }
                     break;
             }
-            switch (_calcState)
-            {
-                case CalculatorState.WaitingFirst:
-                    _keyswitchMaterial.color = Color.red;
-                    break;
-                case CalculatorState.ValidFirst:
-                    _keyswitchMaterial.color = Color.blue;
-                    break;
-                case CalculatorState.WaitingSecond:
-                    _keyswitchMaterial.color = Color.green;
-                    break;
-                case CalculatorState.ValidSecond:
-                    _keyswitchMaterial.color = Color.yellow;
-                    break;
-                default:
-                    _keyswitchMaterial.color = _keyswitchColor;
-                    break;
-            }
         }
         private string TryOperator(string operation)
         {
-            if ((_calcState == CalculatorState.WaitingFirst || _calcState == CalculatorState.ValidFirst))
+            if (_calcState == CalculatorState.WaitingFirst || _calcState == CalculatorState.ValidFirst)
             {
                 switch (operation)
                 {
@@ -262,11 +255,11 @@ namespace NumbersTheCalculator
             else
             {
                 _inputField.text = _operator = null;
-                _input1 = _input2 = _result = 0;
+                _result = _input1 = _input2 = null;
                 _calcState = CalculatorState.WaitingFirst;
             }
         }
-        private void Calculate(double input1, double input2, string op)
+        private void Calculate(double? input1, double? input2, string op)
         {
             switch (op)
             {
@@ -283,14 +276,16 @@ namespace NumbersTheCalculator
                     _result = input1 / input2;
                     break;
                 default:
-                    _result = 0;
+                    _result = null;
                     _inputField.text = "E";
                     Debug.Log("BORK");
                     break;
             }
+            // if result is over 9.99 billion or under -9.99 billion
+            // if result contains decimal show only enough places to fill the max limit
             _inputField.text = _result.ToString();
             _input1 = _result;
-            _input2 = 0;
+            _input2 = null;
             _operator = null;
             _calcState = CalculatorState.WaitingFirst;
         }

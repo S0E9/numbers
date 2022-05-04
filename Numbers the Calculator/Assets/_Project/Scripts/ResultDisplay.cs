@@ -5,14 +5,19 @@ namespace NumbersTheCalculator
 {
     internal class ResultDisplay: MonoBehaviour
     {
-        private float _result;
+        private Calculator _calculator;
+        private double _result;
         private bool _isActive;
         private const float _ACTIVEHEIGHT = 1f;
         private const string _MESHNAMESTART = "SM_Icon_";
         private string _meshName;
         private MeshRenderer meshRenderer;
         private MeshFilter meshFilter;
-        
+
+        private void Awake()
+        {
+            _calculator = FindObjectOfType<Calculator>();
+        }
         private string _meshString()
         {
             string myValue = "";
