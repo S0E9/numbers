@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Linq;
 using TMPro;
 using static NumbersTheCalculator.Enums;
+using System;
 
 namespace NumbersTheCalculator
 {
@@ -29,12 +30,19 @@ namespace NumbersTheCalculator
         private string _operator;
         private double? _result;
         private ResultDisplay _resultDisplay;
+        private bool _hasDecimal;
+        private bool _isNegative;
+        private bool _inputEnabled;
+        private bool _calcError;
+        public int? digitValue;
 
         private void Awake()
         {
             _keyswitchArray = new Keyswitch[17];
             _inputField.text = "";
             _result = null;
+            _inputEnabled = true;
+            _resultDisplay = FindObjectOfType<ResultDisplay>();
             _calcState = CalculatorState.WaitingFirst;
             SetKeyswitches();
         }
@@ -84,11 +92,11 @@ namespace NumbersTheCalculator
         public void EnterValue(KeyValue keyvalue)
         {
             int digit;
-            bool hasDecimal = _inputField.text.Contains(".");
-            bool isNegative = _inputField.text.Contains("-");
+            
             bool inputIsValid = (_inputField.text != "." && _inputField.text != "" && _inputField.text != "-");
             bool hasResult = !_result.Equals(null);
-            bool inputLimit = _inputField.text.Length > 9 ? true : false;
+            _isNegative = _inputField.text.Contains("-");
+            _hasDecimal = _inputField.text.Contains(".");
 
             switch (keyvalue)
             {
@@ -106,14 +114,16 @@ namespace NumbersTheCalculator
                 case KeyValue.Subtract:
                     if (!inputIsValid || _calcState == CalculatorState.ValidFirst)
                     {
-                        if (!isNegative)
+                        if (!_isNegative)
                         {
-                            _inputField.text = "";
-                            _inputField.text += "-";
+                            
                             if (_calcState == CalculatorState.ValidFirst)
                             {
+                                _inputEnabled = true;
                                 _calcState = CalculatorState.WaitingSecond;
                             }
+                            _inputField.text = "";
+                            _inputField.text += "-";
                         }    
                         else
                         {
@@ -163,8 +173,14 @@ namespace NumbersTheCalculator
                     }
                     break;
                 case KeyValue.DecimalPoint:
-                    if (!hasDecimal)
+                    if (!_hasDecimal)
                     {
+                        if (_calcState == CalculatorState.ValidFirst)
+                        {
+                            _inputEnabled = true;
+                            _inputField.text = "";
+                            _calcState = CalculatorState.WaitingSecond;
+                        }
                         _inputField.text += ".";
                     }
                     break;
@@ -184,7 +200,7 @@ namespace NumbersTheCalculator
                     switch (_calcState)
                     {
                         case CalculatorState.WaitingFirst:
-                            if (_inputField.text != "0" && !inputLimit)
+                            if (_inputField.text != "0" && _inputEnabled)
                             {
                                 _inputField.text += $"{digit}";
                             }
@@ -198,21 +214,24 @@ namespace NumbersTheCalculator
                         case CalculatorState.ValidFirst:
                             _inputField.text = "";
                             _inputField.text += $"{digit}";
+                            _inputEnabled = true;
                             _calcState = CalculatorState.WaitingSecond;
                             break;
                         case CalculatorState.WaitingSecond:
-                            if (_inputField.text != "0" && !inputLimit)
+                            if (_inputField.text != "0" && _inputEnabled)
                             {
                                 _inputField.text += $"{digit}";
                             }                            
                             break;
                         default:
-                            _inputField.text = "E";
+                            _calcError = true;
                             Debug.Log("WAT!?");
                             break;
                     }
                     break;
             }
+            CheckInputLimit();
+            _resultDisplay.SetPlaceValue();
         }
         private string TryOperator(string operation)
         {
@@ -237,6 +256,7 @@ namespace NumbersTheCalculator
                         break;
                 }
                 _input1 = double.Parse(_inputField.text);
+                _inputEnabled = true;
                 _calcState = CalculatorState.ValidFirst;
                 return operation;
             }
@@ -258,9 +278,13 @@ namespace NumbersTheCalculator
                 _result = _input1 = _input2 = null;
                 _calcState = CalculatorState.WaitingFirst;
             }
+            _calcError = false;
+            _inputEnabled = true;
         }
         private void Calculate(double? input1, double? input2, string op)
         {
+            double maxValue = 9999999999;
+            double minValue = -maxValue;
             switch (op)
             {
                 case "+":
@@ -277,17 +301,68 @@ namespace NumbersTheCalculator
                     break;
                 default:
                     _result = null;
-                    _inputField.text = "E";
+                    _calcError = true;
                     Debug.Log("BORK");
                     break;
             }
             // if result is over 9.99 billion or under -9.99 billion
-            // if result contains decimal show only enough places to fill the max limit
-            _inputField.text = _result.ToString();
-            _input1 = _result;
-            _input2 = null;
-            _operator = null;
-            _calcState = CalculatorState.WaitingFirst;
+           if (_result > maxValue)
+           {
+                _result = maxValue;
+                _calcError = true;
+           }
+           else if (_result < minValue)
+           {
+                _result = minValue;
+                _calcError = true;
+           }
+           else
+           {
+                CheckOutputLimit();
+                _input1 = _result;
+                _input2 = null;
+                _operator = null;
+                _inputEnabled = true;
+                _calcState = CalculatorState.WaitingFirst;
+           }
+           _inputField.text = _result.ToString();
+            //DisplayResult();
+        }
+        private void CheckInputLimit()
+        {
+            int maxLength;
+            if (_hasDecimal && _isNegative)
+            {
+                maxLength = 12;
+            }
+            else if (_hasDecimal || _isNegative)
+            {
+                maxLength = 11;
+            }
+            else
+            {
+                maxLength = 10;
+            }
+
+            if (_inputField.text.Length >= maxLength)
+            {
+                _inputEnabled = false;
+            }
+        }
+        private void CheckOutputLimit()
+        {
+            int maxLength = 10;
+            decimal result;
+            decimal wholeNumber;
+            decimal roundedResult;
+
+            if (_result % 1 != 0)
+            {
+                result = (decimal)_result;
+                wholeNumber = Math.Round(result);
+                roundedResult = Math.Round(result, maxLength - wholeNumber.ToString().Length);
+                _result = (double?)roundedResult;
+            }
         }
         private void DisplayResult() // to be implimented
         {
@@ -295,5 +370,6 @@ namespace NumbersTheCalculator
         }
         public Mesh[] legendMeshes { get => _legendMeshes; }
         public Mesh[] capMeshes { get => _capMeshes; }
+        public TMP_InputField inputField { get => _inputField; }
     }
 }

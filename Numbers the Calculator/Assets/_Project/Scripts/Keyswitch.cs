@@ -16,7 +16,6 @@ namespace NumbersTheCalculator
         private MeshFilter _capMeshFilter;
         private MeshFilter _legendMeshFilter;
         private BoxCollider _boxCollider;
-        // Start is called before the first frame update
         void Awake()
         {
             _calculator = FindObjectOfType<Calculator>();
