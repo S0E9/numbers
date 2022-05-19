@@ -33,8 +33,10 @@ namespace NumbersTheCalculator
         private bool _hasDecimal;
         private bool _isNegative;
         private bool _inputEnabled;
-        private bool _calcError;
+        public bool calcError;
         public int? digitValue;
+        public string fullNumber;
+        public int decimalIndex;
 
         private void Awake()
         {
@@ -50,7 +52,7 @@ namespace NumbersTheCalculator
         {
             int[] linebreak = { 1, 5, 8, 12 };
             int[] altColor = { 0, 5, 12, 13, 14, 15, 16 };
-            Vector3 keySpawnPosition = new Vector3(-3.5f, 1f, -7.8f);
+            Vector3 keySpawnPosition = new Vector3(-3.5f, -2.5f, -7.8f);
             float hShift = 2.35f;
             float vShift = 2f;
 
@@ -91,8 +93,7 @@ namespace NumbersTheCalculator
         }
         public void EnterValue(KeyValue keyvalue)
         {
-            int digit;
-            
+            int digit;            
             bool inputIsValid = (_inputField.text != "." && _inputField.text != "" && _inputField.text != "-");
             bool hasResult = !_result.Equals(null);
             _isNegative = _inputField.text.Contains("-");
@@ -112,33 +113,45 @@ namespace NumbersTheCalculator
                     }                    
                     break;
                 case KeyValue.Subtract:
-                    if (!inputIsValid || _calcState == CalculatorState.ValidFirst)
+                    switch (_calcState)
                     {
-                        if (!_isNegative)
-                        {
-                            
-                            if (_calcState == CalculatorState.ValidFirst)
+                        case CalculatorState.WaitingFirst:
+                            if (!inputIsValid)
                             {
-                                _inputEnabled = true;
-                                _calcState = CalculatorState.WaitingSecond;
+                                _inputField.text = _inputField.text == "-" ? "" : "-";
+                                _resultDisplay.SetNegative(!_isNegative);
                             }
-                            _inputField.text = "";
-                            _inputField.text += "-";
-                        }    
-                        else
-                        {
-                            _inputField.text = "";
-                        }
+                            else
+                            {
+                                _operator = TryOperator("-");
+                            }
+                            break;
+                        case CalculatorState.ValidFirst: // SOMETHING WRONG HERE
+                            inputField.text = "";
+                            _inputField.text = _inputField.text == "-" ? "" : "-";
+                            _inputEnabled = true;
+                            _resultDisplay.SetNegative(_inputField.text.Contains("-"));
+                            _resultDisplay.hasDecimal = false;
+                            _calcState = CalculatorState.WaitingSecond;
+                            break;
+                        case CalculatorState.WaitingSecond: // SOMETHING WRONG HERE
+                            if (inputIsValid)
+                            {
+                                _input2 = double.Parse(_inputField.text);
+                                Calculate(_input1, _input2, _operator);
+                                _operator = TryOperator("-");
+                            }
+                            else
+                            {
+                                _inputField.text = _inputField.text == "-" ? "" : "-";
+                                _resultDisplay.SetNegative(!_isNegative);                                 
+                            }                            
+                            break;
+                        default:
+                            calcError = true;
+                            Debug.Log("WAT!?");
+                            break;
                     }
-                    else
-                    {
-                        if (_calcState == CalculatorState.WaitingSecond)
-                        {
-                            _input2 = double.Parse(_inputField.text);
-                            Calculate(_input1, _input2, _operator);
-                        }
-                        _operator = TryOperator("-");
-                    }                   
                     break;
                 case KeyValue.Multiply:
                     if(inputIsValid)
@@ -179,9 +192,27 @@ namespace NumbersTheCalculator
                         {
                             _inputEnabled = true;
                             _inputField.text = "";
+                            _resultDisplay.hasDecimal = true;
+                            _inputField.text = ".";
                             _calcState = CalculatorState.WaitingSecond;
                         }
+                        _resultDisplay.hasDecimal = true;
                         _inputField.text += ".";
+                    }
+                    if (_calcState == CalculatorState.WaitingFirst && hasResult)
+                    {
+                            _result = null;
+                            _inputField.text = "";
+                            _resultDisplay.hasDecimal = true;
+                            _inputField.text = ".";
+                    }
+                    if (_hasDecimal && _calcState == CalculatorState.ValidFirst)
+                    {
+                        _inputEnabled = true;
+                        _inputField.text = "";
+                        _resultDisplay.hasDecimal = true;
+                        _inputField.text = ".";
+                        _calcState = CalculatorState.WaitingSecond;
                     }
                     break;
                 default: // digit = -1 on first row, -2 on other two
@@ -208,11 +239,15 @@ namespace NumbersTheCalculator
                             {
                                 _result = null;
                                 _inputField.text = "";
+                                _resultDisplay.SetNegative(false);
+                                _resultDisplay.hasDecimal = false;
                                 _inputField.text += $"{digit}";
                             }
                             break;
                         case CalculatorState.ValidFirst:
                             _inputField.text = "";
+                            _resultDisplay.SetNegative(false);
+                            _resultDisplay.hasDecimal = false;
                             _inputField.text += $"{digit}";
                             _inputEnabled = true;
                             _calcState = CalculatorState.WaitingSecond;
@@ -224,14 +259,31 @@ namespace NumbersTheCalculator
                             }                            
                             break;
                         default:
-                            _calcError = true;
+                            calcError = true;
                             Debug.Log("WAT!?");
                             break;
                     }
                     break;
             }
             CheckInputLimit();
+            fullNumber = _inputField.text.Replace(".", string.Empty);
             _resultDisplay.SetPlaceValue();
+            switch (_calcState)
+            {
+                case CalculatorState.WaitingFirst:
+                    _keyswitchMaterial.color = Color.red;
+                    break;
+                case CalculatorState.ValidFirst:
+                    _keyswitchMaterial.color = Color.green;
+                    Debug.Log(_input1);
+                    break;
+                case CalculatorState.WaitingSecond:
+                    _keyswitchMaterial.color = Color.blue;
+                    break;
+                default:
+                    Debug.Log("NM");
+                    break;
+            }
         }
         private string TryOperator(string operation)
         {
@@ -267,19 +319,25 @@ namespace NumbersTheCalculator
         }
         private void Clear()
         {
-            if (_calcState == CalculatorState.WaitingSecond && _inputField.text != "")
+            if (_calcState == CalculatorState.WaitingSecond && _inputField.text != "" && !calcError)
             {
                 _inputField.text = "";
+                _resultDisplay.hasDecimal = false;
+                _isNegative = false;
                 _calcState = CalculatorState.ValidFirst;
             }
             else
             {
-                _inputField.text = _operator = null;
+                _inputField.text = _operator = "";
                 _result = _input1 = _input2 = null;
+                _resultDisplay.hasDecimal = false;
+                _isNegative = false;
                 _calcState = CalculatorState.WaitingFirst;
             }
-            _calcError = false;
+            calcError = false;
             _inputEnabled = true;
+            _isNegative = _inputField.text.Contains("-");
+            _resultDisplay.SetNegative(_isNegative);
         }
         private void Calculate(double? input1, double? input2, string op)
         {
@@ -301,20 +359,19 @@ namespace NumbersTheCalculator
                     break;
                 default:
                     _result = null;
-                    _calcError = true;
+                    calcError = true;
                     Debug.Log("BORK");
                     break;
             }
-            // if result is over 9.99 billion or under -9.99 billion
            if (_result > maxValue)
            {
                 _result = maxValue;
-                _calcError = true;
+                calcError = true;
            }
            else if (_result < minValue)
            {
                 _result = minValue;
-                _calcError = true;
+                calcError = true;
            }
            else
            {
@@ -323,10 +380,27 @@ namespace NumbersTheCalculator
                 _input2 = null;
                 _operator = null;
                 _inputEnabled = true;
+                if (_hasDecimal)
+                {
+                    _resultDisplay.hasDecimal = true;
+                }
+                else
+                {
+                    _resultDisplay.hasDecimal = false;
+                }
+                _isNegative = _result < 0 ? true : false;
+                _resultDisplay.SetNegative(_isNegative);
                 _calcState = CalculatorState.WaitingFirst;
            }
            _inputField.text = _result.ToString();
-            //DisplayResult();
+            if (_result % 1 == 0)
+            {
+                _resultDisplay.hasDecimal = false;
+            }
+            else
+            {
+                _resultDisplay.hasDecimal = true;
+            }
         }
         private void CheckInputLimit()
         {
@@ -363,10 +437,6 @@ namespace NumbersTheCalculator
                 roundedResult = Math.Round(result, maxLength - wholeNumber.ToString().Length);
                 _result = (double?)roundedResult;
             }
-        }
-        private void DisplayResult() // to be implimented
-        {
-
         }
         public Mesh[] legendMeshes { get => _legendMeshes; }
         public Mesh[] capMeshes { get => _capMeshes; }

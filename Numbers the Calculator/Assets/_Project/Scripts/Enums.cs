@@ -12,13 +12,6 @@ namespace NumbersTheCalculator
         {
             WaitingFirst, ValidFirst, WaitingSecond
         }
-        public enum DigitPlace // this might just be for the display class, maybe remove comma?
-        {
-            Ones, Tens, Hundreds,
-            Thousands, TenThousands, HundredThousands,
-            Millions, TenMillions, HundredMillions,
-            Billions, Comma, Decimal
-        };
         public enum KeyValue
         {
             Zero, DecimalPoint, One, Two, Three, Equals, Four, Five, Six,
