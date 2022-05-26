@@ -22,6 +22,7 @@ namespace NumbersTheCalculator
         private Color _altColor;
         private Material _keyswitchMaterial;
         private Keyswitch[] _keyswitchArray;
+        private ResultDisplay _resultDisplay;
         private Color _keyswitchColor;
 
         private CalculatorState _calcState;
@@ -29,7 +30,7 @@ namespace NumbersTheCalculator
         private double? _input2;
         private string _operator;
         private double? _result;
-        private ResultDisplay _resultDisplay;
+        [SerializeField]
         private bool _hasDecimal;
         private bool _isNegative;
         private bool _inputEnabled;
@@ -322,8 +323,7 @@ namespace NumbersTheCalculator
             if (_calcState == CalculatorState.WaitingSecond && _inputField.text != "" && !calcError)
             {
                 _inputField.text = "";
-                _resultDisplay.hasDecimal = false;
-                _isNegative = false;
+                _resultDisplay.hasDecimal = _hasDecimal = _isNegative = false;
                 _calcState = CalculatorState.ValidFirst;
             }
             else

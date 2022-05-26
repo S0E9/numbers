@@ -30,18 +30,7 @@ namespace NumbersTheCalculator
         {
             _resultString = _calculator.inputField.text;
             SetDigits();
-            
-            if (hasDecimal)
-            {
-                SetDecimal();
-            }
-            else
-            {
-                foreach (GameObject go in decimalElements)
-                {
-                    SetActive(go, false);
-                }
-            }
+            SetDecimal();
             //SetComma();
             SetActive(statusElements[1], _calculator.calcError);
         }
@@ -59,7 +48,6 @@ namespace NumbersTheCalculator
                 {
                     startIndex--;
                     digit = int.Parse(numberString.Substring(startIndex, 1));
-                    //Debug.Log(digit);
                     _meshFilter.mesh = _calculator.legendMeshes[CheckDigit(digit)];
                     SetActive(go, true);
                 }
@@ -82,7 +70,7 @@ namespace NumbersTheCalculator
         {
             _resultString = _calculator.inputField.text;
             string numberString = _calculator.fullNumber;
-            string result = _resultString.Substring(_resultString.IndexOf('.'));
+            string result = hasDecimal ? _resultString.Substring(_resultString.IndexOf('.')) : "" ;
             int decimalIndex = result.Length - 1;
             if (_resultString == "..")
             {
@@ -99,6 +87,7 @@ namespace NumbersTheCalculator
                     SetActive(go, false);
                 }
             }
+
         }
         /*private void SetComma() TO BE IMPLIMENTED
         {

@@ -15,11 +15,15 @@ namespace NumbersTheCalculator
         private Camera _camera;
         private UserInput _userInput;
         private Keyswitch _pressedKeyswitch;
+        public bool hasBeenCalled;
+        public InputAction userControls;
 
         private void Awake()
         {
             _userInput = new UserInput();
+            userControls = _userInput.User.Numpad;
             _camera = Camera.main;
+            hasBeenCalled = false;
         }
 
         private void OnEnable()
@@ -34,12 +38,15 @@ namespace NumbersTheCalculator
         {
             _userInput.User.TouchPress.started += ctx => StartTouch(ctx);
             _userInput.User.TouchPress.canceled += ctx => EndTouch(ctx);
+           // _userInput.User.Numpad.started += ctx => KeyboardPressed(ctx);
+            //_userInput.User.Numpad.canceled += ctx => KeyboardReleased(ctx);
         }
         private void StartTouch(InputAction.CallbackContext context)
         {
             Ray ray = _camera.ScreenPointToRay(_userInput.User.TouchPosition.ReadValue<Vector2>());
             RaycastHit hit;
-            
+
+            hasBeenCalled = true;
             if (Physics.Raycast(ray, out hit))
             {
                 if (hit.collider != null)
@@ -56,6 +63,14 @@ namespace NumbersTheCalculator
                 _pressedKeyswitch.onRelease.Invoke();
                 _pressedKeyswitch = null;
             }
+        }
+        private void KeyboardPressed(InputAction.CallbackContext context)
+        {
+
+        }
+        private void KeyboardReleased(InputAction.CallbackContext context)
+        {
+
         }
     }
 }
