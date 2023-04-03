@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using UnityEngine;
-using static NumbersTheCalculator.Enums;
 
 namespace NumbersTheCalculator
 {
@@ -18,7 +17,6 @@ namespace NumbersTheCalculator
         private Calculator _calculator;
         private MeshFilter _meshFilter;
         private string _resultString;
-        public bool hasDecimal;
 
         private void Awake()
         {
@@ -31,15 +29,13 @@ namespace NumbersTheCalculator
             _resultString = _calculator.inputField.text;
             SetDigits();
             SetDecimal();
-            //SetComma();
-            SetActive(statusElements[1], _calculator.calcError);
+            SetActive(statusElements[1], _calculator.alu.CalcError());
         }
         private void SetDigits()
         {
-            string numberString = _calculator.fullNumber;
+            string numberString = _calculator.inputField.text.Replace(".", string.Empty);
             int startIndex = numberString.Length;
             int digit;
-            //int decimalPoint = 0;
 
             foreach (GameObject go in digitElements)
             {
@@ -68,10 +64,16 @@ namespace NumbersTheCalculator
         }
         private void SetDecimal()
         {
-            _resultString = _calculator.inputField.text;
-            string numberString = _calculator.fullNumber;
-            string result = hasDecimal ? _resultString.Substring(_resultString.IndexOf('.')) : "" ;
-            int decimalIndex = result.Length - 1;
+            int decimalIndex;
+            if (_resultString.Contains("."))
+            {
+                decimalIndex = _resultString == "." ? 0 : _resultString.Substring(_resultString.IndexOf('.')).Length - 1;
+            }
+            else
+            {
+                decimalIndex = -1;
+            }
+
             if (_resultString == "..")
             {
                 _resultString = ".";
@@ -87,30 +89,7 @@ namespace NumbersTheCalculator
                     SetActive(go, false);
                 }
             }
-
         }
-        /*private void SetComma() TO BE IMPLIMENTED
-        {
-            int firstCommaIndex = -1;
-            int SecondCommaIndex;
-            int ThirdCommaIndex;
-            int decimalLength = hasDecimal ? _resultString.Substring(_resultString.IndexOf('.')).Length - 1 : 0;
-            if ( _resultString != null && float.Parse(_resultString) >= 1000)
-            {
-                firstCommaIndex = 0 + decimalLength;
-                foreach (GameObject go in commaElements)
-                {
-                    if (Array.IndexOf(decimalElements, go) == firstCommaIndex)
-                    {
-                        SetActive(go, true);
-                    }
-                    else
-                    {
-                        SetActive(go, false);
-                    }
-                }
-            }
-        }*/
         public void SetNegative(bool isNegative)
         {
             SetActive(statusElements[0], isNegative);

@@ -46,9 +46,45 @@ public partial class @UserInput : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""ClickPress"",
+                    ""type"": ""Button"",
+                    ""id"": ""2b30eb9d-6c76-4c29-8801-ff67f6fbf38f"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ClickPosition"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""95c56637-1ec7-4cd2-80ad-8ce45b88fdd7"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""Numpad"",
                     ""type"": ""Button"",
                     ""id"": ""5f16365e-894b-4358-bb87-c82f6fec7dfc"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Keyboard"",
+                    ""type"": ""Button"",
+                    ""id"": ""d8627e03-cdb9-45ae-acce-ee807d8ba0cc"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Shift"",
+                    ""type"": ""Button"",
+                    ""id"": ""32ff4980-9ecf-4726-8ee0-720eaa4b7df7"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -264,6 +300,215 @@ public partial class @UserInput : IInputActionCollection2, IDisposable
                     ""action"": ""Numpad"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b35279fa-2565-48b1-b9c1-ae697a65c78b"",
+                    ""path"": ""<Keyboard>/0"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Keyboard"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""66e702d5-5c51-41c8-8fec-552d666e39a1"",
+                    ""path"": ""<Keyboard>/period"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Keyboard"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fd08ec03-e28a-4d31-a3b6-bfe544c919e9"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Keyboard"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""39589f92-b5c5-4d42-8e32-210776195df9"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Keyboard"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""33b73d68-718b-4b5b-873c-f659295de988"",
+                    ""path"": ""<Keyboard>/3"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Keyboard"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4c4bc298-9db5-4ca5-aaba-116b9f2d3c49"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Keyboard"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fc8a7141-33d8-485a-b3ba-0274f4f0883c"",
+                    ""path"": ""<Keyboard>/4"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Keyboard"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""77d822fb-9928-4270-9e55-249cf7a255b5"",
+                    ""path"": ""<Keyboard>/5"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Keyboard"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""446d5cee-1d82-4b10-a1ca-b5ee059b6f9f"",
+                    ""path"": ""<Keyboard>/6"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Keyboard"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8d3a5173-8085-44f5-b8bf-608e1ea4f7e5"",
+                    ""path"": ""<Keyboard>/7"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Keyboard"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bd6807d0-82b5-4e75-837b-bd09b4403460"",
+                    ""path"": ""<Keyboard>/9"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Keyboard"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6887d64b-7428-4824-99a8-fefff3109d11"",
+                    ""path"": ""<Keyboard>/8"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Keyboard"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1e7c76d4-ef10-42e4-85e5-91f9ab3cab4e"",
+                    ""path"": ""<Keyboard>/backspace"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Keyboard"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a4dadf69-394e-4faf-a216-8a7a59b01959"",
+                    ""path"": ""<Keyboard>/slash"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Keyboard"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""73e32a4a-2089-4a30-bddb-b2557846e3fe"",
+                    ""path"": ""<Keyboard>/equals"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Keyboard"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4e963045-a340-4311-a04c-3c18a51fa18b"",
+                    ""path"": ""<Keyboard>/minus"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Keyboard"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""81fe928c-7f9e-4f36-be84-7c3acb08add0"",
+                    ""path"": ""<Keyboard>/shift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Shift"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c31da5a6-9727-4013-a05e-c489540fac7a"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ClickPosition"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""dfb6f5f9-c51b-422d-937b-d11790dd94bc"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ClickPress"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -274,7 +519,11 @@ public partial class @UserInput : IInputActionCollection2, IDisposable
         m_User = asset.FindActionMap("User", throwIfNotFound: true);
         m_User_TouchPress = m_User.FindAction("TouchPress", throwIfNotFound: true);
         m_User_TouchPosition = m_User.FindAction("TouchPosition", throwIfNotFound: true);
+        m_User_ClickPress = m_User.FindAction("ClickPress", throwIfNotFound: true);
+        m_User_ClickPosition = m_User.FindAction("ClickPosition", throwIfNotFound: true);
         m_User_Numpad = m_User.FindAction("Numpad", throwIfNotFound: true);
+        m_User_Keyboard = m_User.FindAction("Keyboard", throwIfNotFound: true);
+        m_User_Shift = m_User.FindAction("Shift", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -336,14 +585,22 @@ public partial class @UserInput : IInputActionCollection2, IDisposable
     private IUserActions m_UserActionsCallbackInterface;
     private readonly InputAction m_User_TouchPress;
     private readonly InputAction m_User_TouchPosition;
+    private readonly InputAction m_User_ClickPress;
+    private readonly InputAction m_User_ClickPosition;
     private readonly InputAction m_User_Numpad;
+    private readonly InputAction m_User_Keyboard;
+    private readonly InputAction m_User_Shift;
     public struct UserActions
     {
         private @UserInput m_Wrapper;
         public UserActions(@UserInput wrapper) { m_Wrapper = wrapper; }
         public InputAction @TouchPress => m_Wrapper.m_User_TouchPress;
         public InputAction @TouchPosition => m_Wrapper.m_User_TouchPosition;
+        public InputAction @ClickPress => m_Wrapper.m_User_ClickPress;
+        public InputAction @ClickPosition => m_Wrapper.m_User_ClickPosition;
         public InputAction @Numpad => m_Wrapper.m_User_Numpad;
+        public InputAction @Keyboard => m_Wrapper.m_User_Keyboard;
+        public InputAction @Shift => m_Wrapper.m_User_Shift;
         public InputActionMap Get() { return m_Wrapper.m_User; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -359,9 +616,21 @@ public partial class @UserInput : IInputActionCollection2, IDisposable
                 @TouchPosition.started -= m_Wrapper.m_UserActionsCallbackInterface.OnTouchPosition;
                 @TouchPosition.performed -= m_Wrapper.m_UserActionsCallbackInterface.OnTouchPosition;
                 @TouchPosition.canceled -= m_Wrapper.m_UserActionsCallbackInterface.OnTouchPosition;
+                @ClickPress.started -= m_Wrapper.m_UserActionsCallbackInterface.OnClickPress;
+                @ClickPress.performed -= m_Wrapper.m_UserActionsCallbackInterface.OnClickPress;
+                @ClickPress.canceled -= m_Wrapper.m_UserActionsCallbackInterface.OnClickPress;
+                @ClickPosition.started -= m_Wrapper.m_UserActionsCallbackInterface.OnClickPosition;
+                @ClickPosition.performed -= m_Wrapper.m_UserActionsCallbackInterface.OnClickPosition;
+                @ClickPosition.canceled -= m_Wrapper.m_UserActionsCallbackInterface.OnClickPosition;
                 @Numpad.started -= m_Wrapper.m_UserActionsCallbackInterface.OnNumpad;
                 @Numpad.performed -= m_Wrapper.m_UserActionsCallbackInterface.OnNumpad;
                 @Numpad.canceled -= m_Wrapper.m_UserActionsCallbackInterface.OnNumpad;
+                @Keyboard.started -= m_Wrapper.m_UserActionsCallbackInterface.OnKeyboard;
+                @Keyboard.performed -= m_Wrapper.m_UserActionsCallbackInterface.OnKeyboard;
+                @Keyboard.canceled -= m_Wrapper.m_UserActionsCallbackInterface.OnKeyboard;
+                @Shift.started -= m_Wrapper.m_UserActionsCallbackInterface.OnShift;
+                @Shift.performed -= m_Wrapper.m_UserActionsCallbackInterface.OnShift;
+                @Shift.canceled -= m_Wrapper.m_UserActionsCallbackInterface.OnShift;
             }
             m_Wrapper.m_UserActionsCallbackInterface = instance;
             if (instance != null)
@@ -372,9 +641,21 @@ public partial class @UserInput : IInputActionCollection2, IDisposable
                 @TouchPosition.started += instance.OnTouchPosition;
                 @TouchPosition.performed += instance.OnTouchPosition;
                 @TouchPosition.canceled += instance.OnTouchPosition;
+                @ClickPress.started += instance.OnClickPress;
+                @ClickPress.performed += instance.OnClickPress;
+                @ClickPress.canceled += instance.OnClickPress;
+                @ClickPosition.started += instance.OnClickPosition;
+                @ClickPosition.performed += instance.OnClickPosition;
+                @ClickPosition.canceled += instance.OnClickPosition;
                 @Numpad.started += instance.OnNumpad;
                 @Numpad.performed += instance.OnNumpad;
                 @Numpad.canceled += instance.OnNumpad;
+                @Keyboard.started += instance.OnKeyboard;
+                @Keyboard.performed += instance.OnKeyboard;
+                @Keyboard.canceled += instance.OnKeyboard;
+                @Shift.started += instance.OnShift;
+                @Shift.performed += instance.OnShift;
+                @Shift.canceled += instance.OnShift;
             }
         }
     }
@@ -383,6 +664,10 @@ public partial class @UserInput : IInputActionCollection2, IDisposable
     {
         void OnTouchPress(InputAction.CallbackContext context);
         void OnTouchPosition(InputAction.CallbackContext context);
+        void OnClickPress(InputAction.CallbackContext context);
+        void OnClickPosition(InputAction.CallbackContext context);
         void OnNumpad(InputAction.CallbackContext context);
+        void OnKeyboard(InputAction.CallbackContext context);
+        void OnShift(InputAction.CallbackContext context);
     }
 }

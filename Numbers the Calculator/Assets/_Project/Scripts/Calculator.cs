@@ -24,26 +24,16 @@ namespace NumbersTheCalculator
         private Keyswitch[] _keyswitchArray;
         private ResultDisplay _resultDisplay;
         private Color _keyswitchColor;
-
         private CalculatorState _calcState;
-        private double? _input1;
-        private double? _input2;
-        private string _operator;
-        private double? _result;
-        [SerializeField]
-        private bool _hasDecimal;
-        private bool _isNegative;
+        private ALU _alu;
         private bool _inputEnabled;
-        public bool calcError;
-        public int? digitValue;
-        public string fullNumber;
-        public int decimalIndex;
 
         private void Awake()
         {
             _keyswitchArray = new Keyswitch[17];
             _inputField.text = "";
-            _result = null;
+            _alu = new ALU();
+            _alu.result = null;
             _inputEnabled = true;
             _resultDisplay = FindObjectOfType<ResultDisplay>();
             _calcState = CalculatorState.WaitingFirst;
@@ -61,385 +51,196 @@ namespace NumbersTheCalculator
             {
                 bool isLinebreak = linebreak.Contains(i);
                 bool isAltColor = altColor.Contains(i);
-                
+
                 Keyswitch newKeyswitch = Instantiate(_keyswitch, keySpawnPosition, Quaternion.identity, transform);
                 _keyswitchMaterial = newKeyswitch.GetComponent<MeshRenderer>().material;
                 newKeyswitch.SetKeyValue((KeyValue)i);
                 newKeyswitch.name = i.ToString() + " Key";
-                // Adjust Long & Tall Keys
                 if (i == 0)
-                {
                     keySpawnPosition.x += hShift;
-                }
                 if (i is 5 or 12)
-                {
-                    newKeyswitch.transform.position -= new Vector3 (0f,0f, vShift);
-                }
+                    newKeyswitch.transform.position -= new Vector3(0f, 0f, vShift);
+
                 keySpawnPosition.x += hShift;
                 if (isLinebreak == true)
                 {
                     keySpawnPosition.z += vShift;
                     keySpawnPosition.x = -3.5f;
                 }
-                if(isAltColor == true)
-                {
-                    _keyswitchColor = _altColor;
-                }
-                if(isAltColor == false)
-                {
-                    _keyswitchColor = _mainColor;
-                }
+                _keyswitchColor = isAltColor ? _altColor : _mainColor;
                 _keyswitchMaterial.color = _keyswitchColor;
             }
         }
         public void EnterValue(KeyValue keyvalue)
         {
-            int digit;            
-            bool inputIsValid = (_inputField.text != "." && _inputField.text != "" && _inputField.text != "-");
-            bool hasResult = !_result.Equals(null);
-            _isNegative = _inputField.text.Contains("-");
-            _hasDecimal = _inputField.text.Contains(".");
-
-            switch (keyvalue)
+            keyvalue = keyvalue switch
             {
-                case KeyValue.Add:
-                    if (inputIsValid)
-                    {
-                        if (_calcState == CalculatorState.WaitingSecond)
-                        {
-                            _input2 = double.Parse(_inputField.text);
-                            Calculate(_input1, _input2, _operator);
-                        }
-                        _operator = TryOperator("+");
-                    }                    
-                    break;
-                case KeyValue.Subtract:
-                    switch (_calcState)
-                    {
-                        case CalculatorState.WaitingFirst:
-                            if (!inputIsValid)
-                            {
-                                _inputField.text = _inputField.text == "-" ? "" : "-";
-                                _resultDisplay.SetNegative(!_isNegative);
-                            }
-                            else
-                            {
-                                _operator = TryOperator("-");
-                            }
-                            break;
-                        case CalculatorState.ValidFirst: // SOMETHING WRONG HERE
-                            inputField.text = "";
-                            _inputField.text = _inputField.text == "-" ? "" : "-";
-                            _inputEnabled = true;
-                            _resultDisplay.SetNegative(_inputField.text.Contains("-"));
-                            _resultDisplay.hasDecimal = false;
-                            _calcState = CalculatorState.WaitingSecond;
-                            break;
-                        case CalculatorState.WaitingSecond: // SOMETHING WRONG HERE
-                            if (inputIsValid)
-                            {
-                                _input2 = double.Parse(_inputField.text);
-                                Calculate(_input1, _input2, _operator);
-                                _operator = TryOperator("-");
-                            }
-                            else
-                            {
-                                _inputField.text = _inputField.text == "-" ? "" : "-";
-                                _resultDisplay.SetNegative(!_isNegative);                                 
-                            }                            
-                            break;
-                        default:
-                            calcError = true;
-                            Debug.Log("WAT!?");
-                            break;
-                    }
-                    break;
-                case KeyValue.Multiply:
-                    if(inputIsValid)
-                    {
-                        if (_calcState == CalculatorState.WaitingSecond)
-                        {
-                            _input2 = double.Parse(_inputField.text);
-                            Calculate(_input1, _input2, _operator);
-                        }
-                        _operator = TryOperator("*");
-                    }
-                    break;
-                case KeyValue.Clear:
-                    Clear();
-                    break;
-                case KeyValue.Divide:
-                    if (inputIsValid)
-                    {
-                        if (_calcState == CalculatorState.WaitingSecond)
-                        {
-                            _input2 = double.Parse(_inputField.text);
-                            Calculate(_input1, _input2, _operator);
-                        }
-                        _operator = TryOperator("/");
-                    }
-                    break;
-                case KeyValue.Equals:
-                    if (_calcState == CalculatorState.WaitingSecond)
-                    {
-                        _input2 = double.Parse(_inputField.text);
-                        Calculate(_input1, _input2, _operator);
-                    }
-                    break;
-                case KeyValue.DecimalPoint:
-                    if (!_hasDecimal)
-                    {
-                        if (_calcState == CalculatorState.ValidFirst)
-                        {
-                            _inputEnabled = true;
-                            _inputField.text = "";
-                            _resultDisplay.hasDecimal = true;
-                            _inputField.text = ".";
-                            _calcState = CalculatorState.WaitingSecond;
-                        }
-                        _resultDisplay.hasDecimal = true;
-                        _inputField.text += ".";
-                    }
-                    if (_calcState == CalculatorState.WaitingFirst && hasResult)
-                    {
-                            _result = null;
-                            _inputField.text = "";
-                            _resultDisplay.hasDecimal = true;
-                            _inputField.text = ".";
-                    }
-                    if (_hasDecimal && _calcState == CalculatorState.ValidFirst)
-                    {
-                        _inputEnabled = true;
-                        _inputField.text = "";
-                        _resultDisplay.hasDecimal = true;
-                        _inputField.text = ".";
-                        _calcState = CalculatorState.WaitingSecond;
-                    }
-                    break;
-                default: // digit = -1 on first row, -2 on other two
-                    if ((int)keyvalue < 5 && (int)keyvalue != 1)
-                    {
-                        digit = (int)keyvalue - 1;
-                        if(keyvalue == 0)
-                        {
-                            digit = 0;
-                        }
-                    }
-                    else
-                    {
-                        digit = (int)keyvalue - 2;
-                    }
-                    switch (_calcState)
-                    {
-                        case CalculatorState.WaitingFirst:
-                            if (_inputField.text != "0" && _inputEnabled)
-                            {
-                                _inputField.text += $"{digit}";
-                            }
-                            if (hasResult)
-                            {
-                                _result = null;
-                                _inputField.text = "";
-                                _resultDisplay.SetNegative(false);
-                                _resultDisplay.hasDecimal = false;
-                                _inputField.text += $"{digit}";
-                            }
-                            break;
-                        case CalculatorState.ValidFirst:
-                            _inputField.text = "";
-                            _resultDisplay.SetNegative(false);
-                            _resultDisplay.hasDecimal = false;
-                            _inputField.text += $"{digit}";
-                            _inputEnabled = true;
-                            _calcState = CalculatorState.WaitingSecond;
-                            break;
-                        case CalculatorState.WaitingSecond:
-                            if (_inputField.text != "0" && _inputEnabled)
-                            {
-                                _inputField.text += $"{digit}";
-                            }                            
-                            break;
-                        default:
-                            calcError = true;
-                            Debug.Log("WAT!?");
-                            break;
-                    }
-                    break;
+                KeyValue.Add => CheckOperation(keyvalue),
+                KeyValue.Subtract => CheckMinus(),
+                KeyValue.Multiply => CheckOperation(keyvalue),
+                KeyValue.Clear => Clear(),
+                KeyValue.Divide => CheckOperation(keyvalue),
+                KeyValue.DecimalPoint => CheckDecimal(),
+                KeyValue.Equals => CheckCalculate(),
+                _ => EnterDigit(keyvalue)
+            };
+            ValidateInput();
+        }
+        private KeyValue CheckOperation(KeyValue op)
+        {
+            if (_inputField.text.Any(char.IsDigit))
+            {
+                if (_calcState == CalculatorState.WaitingSecond && _alu.currentOp != null)
+                    SendCalc();
+
+                _alu.currentOp = _alu.CurrentOperator(op);
+                if (_calcState != CalculatorState.WaitingSecond)
+                {
+                    _alu.input1 = _alu.isNegative ? double.Parse(_inputField.text) * -1 : double.Parse(_inputField.text);
+                    if (_inputField.text.Contains("-"))
+                        _alu.input1 = _alu.input1 * -1;
+                    _inputEnabled = true;
+                    _alu.result = null;
+                    _calcState = CalculatorState.ValidFirst;
+                }
+                else
+                    _alu.currentOp = "";
             }
-            CheckInputLimit();
-            fullNumber = _inputField.text.Replace(".", string.Empty);
-            _resultDisplay.SetPlaceValue();
+            if (_alu.input1 != null)
+                _alu.currentOp = _alu.CurrentOperator(op);
+
+            return op;
+        }
+        private KeyValue CheckMinus()
+        {
             switch (_calcState)
             {
                 case CalculatorState.WaitingFirst:
-                    _keyswitchMaterial.color = Color.red;
+                case CalculatorState.WaitingSecond:
+                    if (!_inputField.text.Any(char.IsDigit))
+                        _alu.isNegative = !_alu.isNegative;
+                    else
+                        CheckOperation(KeyValue.Subtract);
                     break;
                 case CalculatorState.ValidFirst:
-                    _keyswitchMaterial.color = Color.green;
-                    Debug.Log(_input1);
-                    break;
-                case CalculatorState.WaitingSecond:
-                    _keyswitchMaterial.color = Color.blue;
-                    break;
-                default:
-                    Debug.Log("NM");
+                    _inputField.text = "";
+                    _alu.isNegative = true;
+                    _inputEnabled = true;
+                    _calcState = CalculatorState.WaitingSecond;
                     break;
             }
+            return KeyValue.Subtract;
         }
-        private string TryOperator(string operation)
+        private KeyValue Clear()
         {
-            if (_calcState == CalculatorState.WaitingFirst || _calcState == CalculatorState.ValidFirst)
-            {
-                switch (operation)
-                {
-                    case "+":
-                        operation = "+";
-                        break;
-                    case "-":
-                        operation = "-";
-                        break;
-                    case "*":
-                        operation = "*";
-                        break;
-                    case "/":
-                        operation = "/";
-                        break;
-                    default:
-                        operation = "";
-                        break;
-                }
-                _input1 = double.Parse(_inputField.text);
-                _inputEnabled = true;
-                _calcState = CalculatorState.ValidFirst;
-                return operation;
-            }
-            else
-            {
-                return "";
-            }
-        }
-        private void Clear()
-        {
-            if (_calcState == CalculatorState.WaitingSecond && _inputField.text != "" && !calcError)
+            if (_calcState == CalculatorState.WaitingSecond && _inputField.text != "" && !_alu.CalcError())
             {
                 _inputField.text = "";
-                _resultDisplay.hasDecimal = _hasDecimal = _isNegative = false;
+                _alu.hasDecimal = _alu.isNegative = false;
                 _calcState = CalculatorState.ValidFirst;
             }
             else
             {
-                _inputField.text = _operator = "";
-                _result = _input1 = _input2 = null;
-                _resultDisplay.hasDecimal = false;
-                _isNegative = false;
+                _inputField.text = _alu.currentOp = "";
+                _alu.result = _alu.input1 = _alu.input2 = null;
+                _alu.isNegative = _alu.hasDecimal = false;
                 _calcState = CalculatorState.WaitingFirst;
             }
-            calcError = false;
+            _alu.CalcError();
             _inputEnabled = true;
-            _isNegative = _inputField.text.Contains("-");
-            _resultDisplay.SetNegative(_isNegative);
+            return KeyValue.Clear;
         }
-        private void Calculate(double? input1, double? input2, string op)
+        private KeyValue CheckCalculate()
         {
-            double maxValue = 9999999999;
-            double minValue = -maxValue;
-            switch (op)
+            if (_calcState == CalculatorState.WaitingSecond && _inputField.text.Any(char.IsDigit))
+                SendCalc();
+            return KeyValue.Equals;
+        }
+        private KeyValue EnterDigit(KeyValue keyvalue)
+        {
+            bool readyForNegative = _alu.isNegative && !_inputField.text.Any(char.IsDigit);
+            int digit = (int)keyvalue switch
             {
-                case "+":
-                    _result = input1 + input2;
+                0 => 0,
+                1 => 1,
+                < 5 => (int)keyvalue - 1,
+                _ => (int)keyvalue - 2
+            };
+            switch (_calcState)
+            {
+                case CalculatorState.WaitingFirst:
+                    if (_inputField.text != "0" && _inputEnabled)
+                    {
+                        if (_alu.result != null)
+                        {
+                            _alu.result = null;
+                            _alu.isNegative = false;
+                            inputField.text = "";
+                        }
+                        _inputField.text += $"{digit}";
+                    }
                     break;
-                case "-":
-                    _result = input1 - input2;
+                case CalculatorState.ValidFirst:
+                    _alu.isNegative = readyForNegative;
+                    _inputField.text = "";
+                    _inputField.text += $"{digit}";
+                    _inputEnabled = true;
+                    _calcState = CalculatorState.WaitingSecond;
                     break;
-                case "*":
-                    _result = input1 * input2;
-                    break;
-                case "/":
-                    _result = input1 / input2;
-                    break;
-                default:
-                    _result = null;
-                    calcError = true;
-                    Debug.Log("BORK");
+                case CalculatorState.WaitingSecond:
+                    if (_inputField.text != "0" && _inputEnabled)
+                    {
+                        _inputField.text += $"{digit}";
+                    }
                     break;
             }
-           if (_result > maxValue)
-           {
-                _result = maxValue;
-                calcError = true;
-           }
-           else if (_result < minValue)
-           {
-                _result = minValue;
-                calcError = true;
-           }
-           else
-           {
-                CheckOutputLimit();
-                _input1 = _result;
-                _input2 = null;
-                _operator = null;
+            return keyvalue;
+        }
+        private KeyValue CheckDecimal()
+        {
+            switch (_calcState)
+            {
+                case CalculatorState.WaitingFirst:
+                case CalculatorState.WaitingSecond:
+                    if (!_alu.hasDecimal)
+                        _inputField.text += ".";
+                    break;
+                case CalculatorState.ValidFirst:
+                    _inputField.text = "";
+                    _inputField.text += ".";
+                    _inputEnabled = true;
+                    _calcState = CalculatorState.WaitingSecond;
+                    break;
+            }
+            return KeyValue.DecimalPoint;
+        }
+        private void SendCalc()
+        {
+            _alu.input2 = _alu.isNegative ? double.Parse(_inputField.text) * -1 : double.Parse(_inputField.text);
+            _alu.Calculate(_alu.input1, _alu.input2, _alu.currentOp);
+            if (!_alu.CalcError())
+            {
                 _inputEnabled = true;
-                if (_hasDecimal)
-                {
-                    _resultDisplay.hasDecimal = true;
-                }
-                else
-                {
-                    _resultDisplay.hasDecimal = false;
-                }
-                _isNegative = _result < 0 ? true : false;
-                _resultDisplay.SetNegative(_isNegative);
+                _alu.isNegative = _alu.result < 0 ? true : false;
                 _calcState = CalculatorState.WaitingFirst;
-           }
-           _inputField.text = _result.ToString();
-            if (_result % 1 == 0)
-            {
-                _resultDisplay.hasDecimal = false;
             }
-            else
-            {
-                _resultDisplay.hasDecimal = true;
-            }
-        }
-        private void CheckInputLimit()
+            _inputField.text = _alu.result.ToString();
+            _alu.input1 = _alu.result;
+            _alu.input2 = null;
+        }        
+        private void ValidateInput()
         {
-            int maxLength;
-            if (_hasDecimal && _isNegative)
-            {
-                maxLength = 12;
-            }
-            else if (_hasDecimal || _isNegative)
-            {
-                maxLength = 11;
-            }
-            else
-            {
-                maxLength = 10;
-            }
-
+            _alu.hasDecimal = inputField.text.Contains(".");
+            int maxLength = _alu.hasDecimal ? 11 : 10;
             if (_inputField.text.Length >= maxLength)
-            {
                 _inputEnabled = false;
-            }
-        }
-        private void CheckOutputLimit()
-        {
-            int maxLength = 10;
-            decimal result;
-            decimal wholeNumber;
-            decimal roundedResult;
 
-            if (_result % 1 != 0)
-            {
-                result = (decimal)_result;
-                wholeNumber = Math.Round(result);
-                roundedResult = Math.Round(result, maxLength - wholeNumber.ToString().Length);
-                _result = (double?)roundedResult;
-            }
+            _resultDisplay.SetNegative(_alu.isNegative);
+            _resultDisplay.SetPlaceValue();
         }
         public Mesh[] legendMeshes { get => _legendMeshes; }
         public Mesh[] capMeshes { get => _capMeshes; }
         public TMP_InputField inputField { get => _inputField; }
+        public ALU alu { get => _alu; }
     }
 }
